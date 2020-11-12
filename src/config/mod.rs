@@ -160,6 +160,9 @@ impl Default for Config {
                 Box::new(output::Alert::new(eve::EveConfiguration::uds(
                     log_dir.join("alert.socket"),
                 ))),
+                Box::new(output::FileInfo::new(eve::EveConfiguration::uds(
+                    log_dir.join("files.socket"),
+                ))),
                 Box::new(output::Flow::new(eve::EveConfiguration::uds(
                     log_dir.join("flow.socket"),
                 ))),

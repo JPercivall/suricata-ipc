@@ -426,6 +426,7 @@ fn ids_process_4sics() {
 
     let mut alerts = 0;
     let mut dns = 0;
+    let mut file_infos = 0;
     let mut flows = 0;
     let mut http = 0;
     let mut smtp = 0;
@@ -459,12 +460,16 @@ fn ids_process_4sics() {
             EveEventType::Tls(_) => {
                 tls += 1;
             }
+            EveEventType::FileInfo(_) => {
+                file_infos += 1;
+            }
         }
     }
 
     assert_eq!(alerts, 0);
     assert!(dns > 27_000);
     assert_eq!(http, 0);
+    assert_eq!(file_infos, 0);
     assert!(flows > 9_000);
     assert_eq!(smtp, 0);
     assert!(stats_messages > 1);

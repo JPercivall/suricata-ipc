@@ -1,6 +1,7 @@
 mod alert;
 mod date_format;
 mod dns;
+mod file_info;
 mod flow;
 mod http;
 mod smtp;
@@ -12,6 +13,7 @@ pub use alert::Alert;
 pub use alert::AlertInfo;
 pub use date_format::parse_date_time;
 pub use dns::{Dns, DnsAnswer, DnsEventType, DnsInfo, DnsQuery};
+pub use file_info::{File, FileInfo};
 pub use flow::{Flow, FlowInfo};
 pub use http::Http;
 pub use smtp::Smtp;
@@ -30,6 +32,8 @@ pub enum EventType {
     Alert(Alert),
     #[serde(rename = "dns")]
     Dns(Dns),
+    #[serde(rename = "fileInfo")]
+    FileInfo(File),
     #[serde(rename = "flow")]
     Flow(Flow),
     #[serde(rename = "http")]
@@ -327,6 +331,20 @@ mod tests {
             }
         } else {
             panic!("Not dns")
+        }
+    }
+
+    #[test]
+    fn should_decode_file() {
+        let msg = r#"{"timestamp":"2020-08-05T13:32:29.341318+0000", "flow_id":1925256485615034, "event_type":"fileInfo","src_ip":"16.0.0.1","src_port":41668,"dest_ip":"48.0.0.1","dest_port":80,"proto":"TCP","tx_id":0,"community_id":"1:p1ceBUuGcR8ILP4a2kUZp97NUQM=", "fileInfo": {"filename": "test.bat", "state": "downloaded", "stored": true, "size": 712330, "tx_id": 123151, "gaps": false}}"#;
+
+        let eve = Message::try_from(msg.as_bytes().as_ref()).expect("Failed to read eve message");
+
+        if let EventType::FileInfo(v) = eve.event {
+            assert!(!v.info.filename.is_empty());
+            assert!(!v.info.state.is_empty());
+        } else {
+            panic!("Not FileInfo")
         }
     }
 
